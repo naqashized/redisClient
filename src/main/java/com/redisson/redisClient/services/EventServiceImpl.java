@@ -23,13 +23,15 @@ public class EventServiceImpl implements EventService{
     public Mono<Void> addEvents(List<Event> events) {
         RTimeSeries<List<Event>, Long> rTimeSeries = redissonClient.getTimeSeries(CACHE_NAME);
         rTimeSeries.add(Instant.now().getEpochSecond(), events, CACHE_TIME, TimeUnit.SECONDS);
-        return null;
+        return Mono.empty();
     }
 
     @Override
     public Mono<MetreReadingStatistics> findMetreReadingStats() {
         RTimeSeries<List<Event>, Long> rTimeSeries = redissonClient.getTimeSeries(CACHE_NAME);
-        DoubleSummaryStatistics metreStatistics = rTimeSeries.stream().flatMap(Collection::stream).collect(Collectors.summarizingDouble(Event::metreReading));
-        return Mono.just(new MetreReadingStatistics(metreStatistics.getAverage(), metreStatistics.getMax(), metreStatistics.getMin(), metreStatistics.getCount()));
+        DoubleSummaryStatistics metreStatistics = rTimeSeries.stream().
+                flatMap(Collection::stream).collect(Collectors.summarizingDouble(Event::metreReading));
+        return Mono.just(new MetreReadingStatistics(metreStatistics.getAverage(), metreStatistics.getMax(),
+                metreStatistics.getMin(), metreStatistics.getCount()));
     }
 }

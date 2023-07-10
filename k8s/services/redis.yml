@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-local
+  labels:
+    db: redis-local
+spec:
+  selector:
+    matchLabels:
+      db: redis-local
+  template:
+    metadata:
+      labels:
+        db: redis-local
+    spec:
+      containers:
+        - name: redis-local
+          image: redis:latest
+          resources:
+            requests:
+              cpu: 100m
+              memory: 60Mi
+            limits:
+              cpu: 200m
+              memory: 120Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-local
+  labels:
+    db: redis-local
+spec:
+  type: ClusterIP
+  selector:
+    db: redis-local
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
+

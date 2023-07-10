@@ -1,0 +1,28 @@
+version: "1.0"
+services:
+
+  # Applications
+
+  redisclient:
+    depends_on:
+      - redis-local
+    image: "redisclient"
+    container_name: "redisclient"
+    ports:
+      - 8080:8080
+      - 8001:8001
+    environment:
+      # Buildpacks environment variable to configure the number of threads in memory calculation
+      - BPL_JVM_THREAD_COUNT=50
+      # Buildpacks environment variable to enable debug through a socket on port 8001
+      - BPL_DEBUG_ENABLED=true
+      - BPL_DEBUG_PORT=8001
+      - SPRING_PROFILES_ACTIVE=local
+  
+  # Backing Services
+
+  redis-local:
+    image: "redis:latest"
+    container_name: "redis-local"
+    ports:
+      - 6379:6379

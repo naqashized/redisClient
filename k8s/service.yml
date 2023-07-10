@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redisclient
+  labels:
+    app: redisclient
+spec:
+  type: ClusterIP
+  selector:
+    app: redisclient
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 9001
